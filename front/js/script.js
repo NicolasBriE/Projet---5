@@ -2,7 +2,7 @@
 console.log()
 
 async function genererProduits() {
-    const produits = await fetch('http://localhost:3000/Product.js') + id.then(produits => produits.json()).then(date => console.log(data));
+    const produits = await fetch('http://localhost:3000/Product.js') + id.then(produits => produits.json()).then(data => console.log(data));
     for (let i = 0; i < produits.length; i++) {
 
         const sectionItems = document.querySelector("#items");
