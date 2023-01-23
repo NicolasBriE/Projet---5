@@ -1,0 +1,14 @@
+const reponse = await fetch('http://localhost:3000/Product.js');
+const produits = await reponse.url();
+
+function genererProduits(produits) {
+    for (let i = 0; i < produits.length; i++) {
+
+        const sectionIndex = document.querySelector("#items");
+        const produitElement = document.createElement("produit");
+        const imageElement = document.createElement("imgUrl");
+        const nomElement = document.createElement("name");
+        const descriptionElement = document.createElement("description")
+        console.log()
+    }
+}
