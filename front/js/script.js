@@ -1,5 +1,5 @@
 
-console.log('Articles')
+console.log()
 
 async function genererProduits() {
     const produits = await fetch('http://localhost:3000/Product.js') + id.then(produits => produits.json());
