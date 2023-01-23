@@ -1,4 +1,4 @@
-const produits = fetch('http://localhost:3000/Product.js').then(produits => produits.json());
+const produits = await fetch('http://localhost:3000/Product.js').then(produits => produits.json());
 
 
 function genererProduits(produits) {
