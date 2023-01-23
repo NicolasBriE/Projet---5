@@ -1,6 +1,8 @@
 
+console.log(Articles)
+
 async function genererProduits() {
-    const produits = await fetch('http://localhost:3000/Product.js').then(produits => produits.json());
+    const produits = await fetch('http://localhost:3000/Product.js') + id.then(produits => produits.json());
     for (let i = 0; i < produits.length; i++) {
 
         const sectionItems = document.querySelector("#items");
@@ -13,6 +15,6 @@ async function genererProduits() {
         articleElement.appendChild(imageElement);
         articleElement.appendChild(nomElement);
         articleElement.appendChild(descriptionElement);
-        console.log()
+
     }
 }
