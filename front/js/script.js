@@ -1,8 +1,6 @@
-const produits = await fetch('http://localhost:3000/Product.js').then(produits => produits.json());
 
-
-function genererProduits(produits) {
-
+async function genererProduits(produits) {
+    const produits = await fetch('http://localhost:3000/Product.js').then(produits => produits.json());
     for (let i = 0; i < produits.length; i++) {
 
         const sectionItems = document.querySelector("#items");
