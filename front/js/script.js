@@ -1,5 +1,5 @@
 
-async function genererProduits(produits) {
+async function genererProduits() {
     const produits = await fetch('http://localhost:3000/Product.js').then(produits => produits.json());
     for (let i = 0; i < produits.length; i++) {
 
