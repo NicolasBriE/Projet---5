@@ -1,20 +1,45 @@
 
-console.log()
+fetch('http://localhost:3000/api/Products/')
+    .then(response => console.table(response.json()))
 
-async function genererProduits() {
-    const produits = await fetch('http://localhost:3000/Product.js') + id.then(produits => produits.json()).then(data => console.log(data));
-    for (let i = 0; i < produits.length; i++) {
+async function getProducts() {
+    await fetch('http://localhost:3000/api/Products/')
 
-        const sectionItems = document.querySelector("#items");
-        const aElement = document.createElement("a");
-        const articleElement = document.createElement("article");
-        aElement.appendChild(articleElement);
-        const imageElement = document.createElement("imgUrl");
-        const nomElement = document.createElement("name");
-        const descriptionElement = document.createElement("description")
-        articleElement.appendChild(imageElement);
-        articleElement.appendChild(nomElement);
-        articleElement.appendChild(descriptionElement);
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            return (products = data);
+        });
+};
 
-    }
+
+const sectionItems = document.getElementById('items');
+
+async function afficherProducts() {
+
+    await getProducts();
+    for (let i = 0; i < products.length; i++) {
+
+        sectionItems.innerHTML +=
+            `<a href="./product.html?id=${products[i]._id}">
+    <article>
+        <img src="${products[i].imageUrl}"</img>
+        <h3 class="productName">${products[i].name}</h3>
+        <p class="productDescription">${products[i].description}</p>
+    </article>
+    </a>`;
+    };
+
+
 }
+
+afficherProducts();
+
+
+  //     .then((products) => { })
+
+    // function postElement(product) {
+    //     const anchorElement = document.createElement('a');
+    //     anchorElement.setAttribute('href', `http://localhost:3000/api/Products/{product._id}`)
+    // }
