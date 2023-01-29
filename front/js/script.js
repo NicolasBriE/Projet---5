@@ -19,6 +19,7 @@ fetch('http://localhost:3000/api/Products/')
 
             const imageItems = document.createElement("img")
             imageItems.src = data[i].imageUrl
+            imageItems.alt = data[i].altTxt
             articleItems.appendChild(imageItems)
 
             const nameItems = document.createElement("h3")
