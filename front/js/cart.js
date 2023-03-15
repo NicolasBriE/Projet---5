@@ -68,6 +68,41 @@ fetch('http://localhost:3000/api/Products/')
             quantiteInput.setAttribute("type", "number");
             quantiteInput.setAttribute("class", "itemQuantity");
             quantiteInput.setAttribute("name", "itemQuantity");
+            quantiteInput.addEventListener("change", function () {
+                if (quantiteInput.value >= 1 && quantiteInput.value <= 100) {
+                    let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
+                    modifQuant.quantite = quantiteInput.value;
+                    console.log(panier);
+                    localStorage.setItem("panier", JSON.stringify(panier));
+                    calculs();
+                }
+
+                else if (quantiteInput.value == 0) {
+                    let deleteProd = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
+                    let index = panier.indexOf(deleteProd);
+                    panier.splice(index, 1);
+                    // console.log(deleteProd);
+                    console.log(index);
+                    // panier.filter(element => element != deleteProd);
+                    // for (i = 0; i < panier.length; i++) {
+                    //     if (panier[i] === deleteProd) {
+                    //         panier.splice(i, 1);
+                    //         console.log(panier);
+                    //     }
+                    // }
+                    console.log(panier);
+                    localStorage.setItem("panier", JSON.stringify(panier));
+                    calculs();
+                    cartItem.remove();
+                    console.log(cartItem);
+                    window.alert("Ce produit a été supprimé du panier.")
+                }
+
+                else if (quantiteInput.value > 100) {
+                    window.alert("Vous ne pouvez pas choisir plus de 100 exemplaires d'un même produit.")
+                }
+
+            })
             quantiteInput.setAttribute("min", "1");
             quantiteInput.setAttribute("max", "100");
             quantiteInput.setAttribute("value", `${panier[i].quantite}`);
@@ -79,7 +114,47 @@ fetch('http://localhost:3000/api/Products/')
             const boutonSupprimer = document.createElement("p");
             boutonSupprimer.className = "deleteItem";
             boutonSupprimer.textContent = "Supprimer";
-
+            boutonSupprimer.addEventListener("click", function () {
+                console.log(cartItem.getAttribute("data-id"));
+                for (let i = 0; i < panier.length; i++) {
+                    if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
+                        panier.splice(i, 1);
+                        console.log(panier);
+                        localStorage.setItem("panier", JSON.stringify(panier));
+                        calculs();
+                    }
+                }
+                cartItem.remove();
+                window.alert("Ce produit a été supprimé du panier.")
+            })
+            cartItemContentSettingsDelete.appendChild(boutonSupprimer);
 
         }
+
+        function calculs() {
+            let totalQte = 0;
+            let totalPrix = 0;
+
+            for (i = 0; i < panier.length; i++) {
+                totalQte += Number(panier[i].quantite);
+                const details = data.find((element) => element._id === panier[i].id);
+                totalPrix += (details.price) * (panier[i].quantite);
+            }
+
+            console.log(totalQte);
+            console.log(totalPrix);
+
+            const totalQuantite = document.getElementById("totalQuantity");
+            totalQuantite.innerText = totalQte;
+
+            const calculPrix = document.getElementById("totalPrice");
+            calculPrix.innerText = totalPrix;
+
+        }
+
+        calculs();
     })
+
+
+
+
