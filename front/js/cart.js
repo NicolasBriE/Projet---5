@@ -1,5 +1,4 @@
 let panier = JSON.parse(localStorage.getItem("panier"))
-console.log(panier)
 
 const cartItems = document.getElementById('cart__items')
 
@@ -70,7 +69,6 @@ fetch('http://localhost:3000/api/Products/')
                 if (quantiteInput.value >= 1 && quantiteInput.value <= 100) {
                     let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     modifQuant.quantite = quantiteInput.value;
-                    console.log(panier);
                     localStorage.setItem("panier", JSON.stringify(panier));
                     calculs();
                 }
@@ -79,13 +77,10 @@ fetch('http://localhost:3000/api/Products/')
                     let deleteProd = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     let index = panier.indexOf(deleteProd);
                     panier.splice(index, 1);
-                    console.log(index);
 
-                    console.log(panier);
                     localStorage.setItem("panier", JSON.stringify(panier));
                     calculs();
                     cartItem.remove();
-                    console.log(cartItem);
                     window.alert("Ce produit a été supprimé du panier.")
                 }
 
@@ -106,11 +101,9 @@ fetch('http://localhost:3000/api/Products/')
             boutonSupprimer.className = "deleteItem";
             boutonSupprimer.textContent = "Supprimer";
             boutonSupprimer.addEventListener("click", function () {
-                console.log(cartItem.getAttribute("data-id"));
                 for (let i = 0; i < panier.length; i++) {
                     if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
                         panier.splice(i, 1);
-                        console.log(panier);
                         localStorage.setItem("panier", JSON.stringify(panier));
                         calculs();
                     }
@@ -131,9 +124,6 @@ fetch('http://localhost:3000/api/Products/')
                 const details = data.find((element) => element._id === panier[i].id);
                 totalPrix += (details.price) * (panier[i].quantite);
             }
-
-            console.log(totalQte);
-            console.log(totalPrix);
 
             const totalQuantite = document.getElementById("totalQuantity");
             totalQuantite.innerText = totalQte;
@@ -171,13 +161,11 @@ firstName.addEventListener("change", function () {
 
     if (nameRegex.test(firstName.value)) {
         verifFirstName = true;
-        console.log(verifFirstName);
         firstNameErrorMessage.innerText = "";
     }
 
     else {
         verifFirstName = false;
-        console.log(verifFirstName);
         firstNameErrorMessage.innerText = "Veuillez remplir le champ correctement.";
     }
 
@@ -190,13 +178,11 @@ lastName.addEventListener("change", function () {
 
     if (nameRegex.test(lastName.value)) {
         verifLastName = true;
-        console.log(verifLastName);
         lastNameErrorMessage.innerText = "";
     }
 
     else {
         verifLastName = false;
-        console.log(verifLastName);
         lastNameErrorMessage.innerText = "Veuillez remplir le champ correctement.";
     }
 })
@@ -208,13 +194,11 @@ address.addEventListener("change", function () {
 
     if (addressRegex.test(address.value)) {
         verifAddress = true;
-        console.log(verifAddress);
         addressErrorMessage.innerText = "";
     }
 
     else {
         verifAddress = false;
-        console.log(verifAddress);
         addressErrorMessage.innerText = "Veuillez remplir le champ correctement.";
     }
 })
@@ -226,13 +210,11 @@ city.addEventListener("change", function () {
 
     if (addressRegex.test(city.value)) {
         verifCity = true;
-        console.log(verifCity);
         cityErrorMessage.innerText = "";
     }
 
     else {
         verifCity = false;
-        console.log(verifCity);
         cityErrorMessage.innerText = "Veuillez remplir le champ correctement.";
     }
 })
@@ -244,14 +226,12 @@ email.addEventListener("change", function () {
 
     if (emailRegex.test(email.value)) {
         verifEmail = true;
-        console.log(verifEmail);
         emailErrorMessage.innerText = "";
 
     }
 
     else {
         verifEmail = false;
-        console.log(verifEmail);
         emailErrorMessage.innerText = "Veuillez remplir le champ correctement.";
     }
 })
@@ -267,7 +247,6 @@ boutonCommander.addEventListener("click", function () {
         for (let i = 0; i < panier.length; i++) {
             idList.push(panier[i].id)
         }
-        console.log(idList)
 
         let commande = {
             contact: {
@@ -285,14 +264,12 @@ boutonCommander.addEventListener("click", function () {
             body: JSON.stringify(commande),
             headers: { 'Content-Type': 'application/json' }
         }
-        console.log(envoiCommande);
 
         fetch(`http://localhost:3000/api/Products/order`, envoiCommande)
             .then((response) => {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
                 window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
 
             })
