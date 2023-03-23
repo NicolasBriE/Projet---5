@@ -6,14 +6,12 @@ const cartItems = document.getElementById('cart__items')
 fetch('http://localhost:3000/api/Products/')
     .then((response) => {
         return response.json();
-        // afficherProducts(response.json());
     })
 
     .then((data) => {
 
         for (let i = 0; i < panier.length; i++) {
 
-            // for (let i = 0; i < panier.length; i++) {
 
             const details = data.find((element) => element._id === panier[i].id);
 
@@ -81,15 +79,8 @@ fetch('http://localhost:3000/api/Products/')
                     let deleteProd = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     let index = panier.indexOf(deleteProd);
                     panier.splice(index, 1);
-                    // console.log(deleteProd);
                     console.log(index);
-                    // panier.filter(element => element != deleteProd);
-                    // for (i = 0; i < panier.length; i++) {
-                    //     if (panier[i] === deleteProd) {
-                    //         panier.splice(i, 1);
-                    //         console.log(panier);
-                    //     }
-                    // }
+
                     console.log(panier);
                     localStorage.setItem("panier", JSON.stringify(panier));
                     calculs();

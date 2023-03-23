@@ -12,9 +12,6 @@ fetch(`http://localhost:3000/api/Products/${recupId}`)
 
     .then((data) => {
 
-        // const imageItem = document.createElement("img")
-        // imageItem.src = data.imageUrl
-        // articleItem.appendChild(imageItem)
         const imageItem = document.querySelector(".item__img");
         imageItem.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
 
@@ -57,14 +54,10 @@ addToCartBtn.addEventListener("click", function () {
 
     let produitObj = new Produit(idProduit, couleurProduit, quantiteProduit);
 
-    // let arrayProduit = { idProduit, couleurProduit, quantiteProduit };
-    // console.log(arrayProduit)
 
     let panier = JSON.parse(localStorage.getItem("panier"))
     console.log(panier)
     let modifQuantite = false;
-    // panier.push(arrayProduit);
-    // console.log(panier);
 
 
     if (!panier) {
@@ -74,12 +67,6 @@ addToCartBtn.addEventListener("click", function () {
         localStorage.setItem("panier", JSON.stringify(panier));
     }
 
-    // if (!panier) {
-    //     panier = [];
-    //     panier.push(arrayProduit);
-    //     console.log(panier);
-    //     localStorage.setItem("panier", JSON.stringify(panier));
-    // }
 
 
     else {
@@ -106,43 +93,6 @@ addToCartBtn.addEventListener("click", function () {
 
     }
 
-    // else {
-
-    //     let i = 0;
-    //     while (i < panier.length && !modifQuantite) {
-
-    //         if (panier[i].idProduit === arrayProduit.idProduit && panier[i].couleurProduit === arrayProduit.couleurProduit) {
-    //             panier[i].quantiteProduit += arrayProduit.quantiteProduit;
-    //             modifQuantite = true;
-    //             console.log(panier);
-    //             console.log(modifQuantite);
-    //             localStorage.setItem("panier", JSON.stringify(panier));
-    //         }
-    //         i++;
-
-    //     }
-
-    //     if (!modifQuantite) {
-    //         panier.push(arrayProduit);
-    //         console.log(panier);
-    //         localStorage.setItem("panier", JSON.stringify(panier));
-    //     }
-
-    // }
-
-
-
-    // panier.forEach((arrayPanier) => {
-
-    //     if (arrayPanier.idProduit === arrayProduit.idProduit && arrayPanier.couleurProduit === arrayProduit.couleurProduit) {
-    //         arrayPanier.quantiteProduit += arrayProduit.quantiteProduit;
-    //         modifQuantite = true;
-    //         console.log(panier);
-    //         console.log(modifQuantite);
-    //         localStorage.setItem("panier", JSON.stringify(panier));
-    //     }
-
-    // })
 
 })
 
