@@ -153,7 +153,7 @@ let city = document.getElementById("city");
 let email = document.getElementById("email");
 // Regex à utiliser
 let nameRegex = /^[A-Z][A-Za-z\é\è\ê\-]+$/;
-let addressRegex = /^[a-zA-Z0-9\s,'-]*$/;
+let addressRegex = /^[A-Z][A-Za-z\é\è\ê\-]{2,30}+$/;
 let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
 // Variables pour les tests regex
 let verifFirstName;
