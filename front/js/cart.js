@@ -243,39 +243,50 @@ boutonCommander = document.getElementById("order");
 
 boutonCommander.addEventListener("click", (event) => {
     event.preventDefault();
-    if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
+    if (panier.length === 0) {
+        window.alert("Votre panier est vide");
+    }
 
-        let idList = []
+    else {
+        if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
 
-        for (let i = 0; i < panier.length; i++) {
-            idList.push(panier[i].id)
+            let idList = []
+
+            for (let i = 0; i < panier.length; i++) {
+                idList.push(panier[i].id)
+            }
+
+            let commande = {
+                contact: {
+                    firstName: firstName.value,
+                    lastName: lastName.value,
+                    address: address.value,
+                    city: city.value,
+                    email: email.value,
+                },
+                products: idList,
+            }
+
+            let envoiCommande = {
+                method: 'POST',
+                body: JSON.stringify(commande),
+                headers: { 'Content-Type': 'application/json' }
+            }
+
+            fetch(`http://localhost:3000/api/Products/order`, envoiCommande)
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
+
+                })
+
         }
 
-        let commande = {
-            contact: {
-                firstName: firstName.value,
-                lastName: lastName.value,
-                address: address.value,
-                city: city.value,
-                email: email.value,
-            },
-            products: idList,
+
+        else {
+            window.alert("Veuillez remplir les champs du formulaire correctement");
         }
-
-        let envoiCommande = {
-            method: 'POST',
-            body: JSON.stringify(commande),
-            headers: { 'Content-Type': 'application/json' }
-        }
-
-        fetch(`http://localhost:3000/api/Products/order`, envoiCommande)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
-
-            })
-
     }
 })
