@@ -2,6 +2,36 @@ let panier = JSON.parse(localStorage.getItem("panier"))
 
 const cartItems = document.getElementById('cart__items')
 
+function calculTotauxQtePrix(data) {
+    let totalQte = 0;
+    let totalPrix = 0;
+
+    for (i = 0; i < panier.length; i++) {
+        totalQte += Number(panier[i].quantite);
+        const details = data.find((element) => element._id === panier[i].id);
+        totalPrix += (details.price) * (panier[i].quantite);
+    }
+
+    const totalQuantite = document.getElementById("totalQuantity");
+    totalQuantite.innerText = totalQte;
+
+    const calculPrix = document.getElementById("totalPrice");
+    calculPrix.innerText = totalPrix;
+
+}
+
+function majPanier(cartItem, data) {
+    for (let i = 0; i < panier.length; i++) {
+        if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
+            panier.splice(i, 1);
+            localStorage.setItem("panier", JSON.stringify(panier));
+            calculTotauxQtePrix(data);
+        }
+    }
+    cartItem.remove();
+    window.alert("Ce produit a été supprimé du panier.")
+}
+
 fetch('http://localhost:3000/api/Products/')
     .then((response) => {
         return response.json();
@@ -70,18 +100,11 @@ fetch('http://localhost:3000/api/Products/')
                     let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     modifQuant.quantite = quantiteInput.value;
                     localStorage.setItem("panier", JSON.stringify(panier));
-                    calculs();
+                    calculTotauxQtePrix(data);
                 }
 
                 else if (quantiteInput.value == 0) {
-                    let deleteProd = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
-                    let index = panier.indexOf(deleteProd);
-                    panier.splice(index, 1);
-
-                    localStorage.setItem("panier", JSON.stringify(panier));
-                    calculs();
-                    cartItem.remove();
-                    window.alert("Ce produit a été supprimé du panier.")
+                    majPanier(cartItem, data);
                 }
 
                 else if (quantiteInput.value > 100) {
@@ -100,40 +123,19 @@ fetch('http://localhost:3000/api/Products/')
             const boutonSupprimer = document.createElement("p");
             boutonSupprimer.className = "deleteItem";
             boutonSupprimer.textContent = "Supprimer";
-            boutonSupprimer.addEventListener("click", function () {
-                for (let i = 0; i < panier.length; i++) {
-                    if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
-                        panier.splice(i, 1);
-                        localStorage.setItem("panier", JSON.stringify(panier));
-                        calculs();
-                    }
-                }
-                cartItem.remove();
-                window.alert("Ce produit a été supprimé du panier.")
-            })
+            boutonSupprimer.addEventListener("click", () => {
+                majPanier(cartItem, data);
+            }
+
+            )
             cartItemContentSettingsDelete.appendChild(boutonSupprimer);
 
         }
 
-        function calculs() {
-            let totalQte = 0;
-            let totalPrix = 0;
 
-            for (i = 0; i < panier.length; i++) {
-                totalQte += Number(panier[i].quantite);
-                const details = data.find((element) => element._id === panier[i].id);
-                totalPrix += (details.price) * (panier[i].quantite);
-            }
 
-            const totalQuantite = document.getElementById("totalQuantity");
-            totalQuantite.innerText = totalQte;
 
-            const calculPrix = document.getElementById("totalPrice");
-            calculPrix.innerText = totalPrix;
-
-        }
-
-        calculs();
+        calculTotauxQtePrix(data);
     })
 
 
@@ -239,7 +241,9 @@ email.addEventListener("change", function () {
 boutonCommander = document.getElementById("order");
 
 
-boutonCommander.addEventListener("click", function () {
+boutonCommander.addEventListener("click", (event) => {
+    event.preventDefault();
+    console.log(panier);
     if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
 
         let idList = []
