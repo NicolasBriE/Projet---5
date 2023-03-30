@@ -243,7 +243,6 @@ boutonCommander = document.getElementById("order");
 
 boutonCommander.addEventListener("click", (event) => {
     event.preventDefault();
-    console.log(panier);
     if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
 
         let idList = []
