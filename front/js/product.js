@@ -80,9 +80,15 @@ addToCartBtn.addEventListener("click", function () {
                 // Si un élément du panier et le produit partagent la même id et couleur, augmenter la quantité dans le panier
                 if (panier[i].id === produitObj.id && panier[i].couleur === produitObj.couleur) {
                     panier[i].quantite += produitObj.quantite;
-                    modifQuantite = true;
-                    console.log(modifQuantite);
-                    localStorage.setItem("panier", JSON.stringify(panier));
+                    if (panier[i].quantite > 100) {
+                        modifQuantite = true;
+                        window.alert("Vous ne pouvez pas choisir plus de 100 exemplaires d'un même produit.");
+                    }
+                    else {
+                        modifQuantite = true;
+                        console.log(modifQuantite);
+                        localStorage.setItem("panier", JSON.stringify(panier));
+                    }
                 }
                 i++;
 
@@ -101,7 +107,8 @@ addToCartBtn.addEventListener("click", function () {
         window.alert("Veuillez choisir un nombre entre 1 et 100.")
     }
 
-})
+}
+)
 
 
 
