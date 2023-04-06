@@ -34,6 +34,13 @@ function majPanier(cartItem, data) {
     window.alert("Ce produit a été supprimé du panier.")
 }
 
+// Si le panier est vide, envoyer un message d'erreur
+if (panier.length === 0) {
+    window.alert("Votre panier est vide");
+    const hideForm = document.querySelector(".cart__order")
+    hideForm.style.display = "none";
+}
+
 // Récupération des données de l'api
 fetch('http://localhost:3000/api/Products/')
     .then((response) => {
@@ -153,7 +160,7 @@ let city = document.getElementById("city");
 let email = document.getElementById("email");
 // Regex à utiliser
 let nameRegex = /^[A-Z][A-Za-z\é\è\ê\-]+$/;
-let addressRegex = /^[A-Z][A-Za-z\é\è\ê\-]{2,30}+$/;
+let addressRegex = /^[0-9]{1,3}[a-zA-Zéêëèîïâäçù ,'-]+$/;
 let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
 // Variables pour les tests regex
 let verifFirstName;
@@ -217,7 +224,7 @@ city.addEventListener("change", function () {
 
 
 
-    if (addressRegex.test(city.value)) {
+    if (nameRegex.test(city.value)) {
         verifCity = true;
         cityErrorMessage.innerText = "";
     }
@@ -251,53 +258,49 @@ boutonCommander = document.getElementById("order");
 // Ecoute du bouton commander
 boutonCommander.addEventListener("click", (event) => {
     event.preventDefault();
-    // Si le panier est vide, envoyer un message d'erreur
-    if (panier.length === 0) {
-        window.alert("Votre panier est vide");
+
+
+    // Si les tests regex sont bons, récupérer les id dans le panier et les infos dans les champs du formulaire, et créer l'ensemble à envoyer
+    if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
+
+        let idList = []
+
+        for (let i = 0; i < panier.length; i++) {
+            idList.push(panier[i].id)
+        }
+
+        let commande = {
+            contact: {
+                firstName: firstName.value,
+                lastName: lastName.value,
+                address: address.value,
+                city: city.value,
+                email: email.value,
+            },
+            products: idList,
+        }
+        // Méthode pour envoyer la commande
+        let envoiCommande = {
+            method: 'POST',
+            body: JSON.stringify(commande),
+            headers: { 'Content-Type': 'application/json' }
+        }
+        // Envoi de la commande et récupération de l'id commande
+        fetch(`http://localhost:3000/api/Products/order`, envoiCommande)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                // Renvoi vers la page confirmation avec l'id de la commande dans l'url
+                window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
+
+            })
+
     }
 
+    // Si les champs du formulaire ne sont pas bien remplis
     else {
-        // Si les tests regex sont bons, récupérer les id dans le panier et les infos dans les champs du formulaire, et créer l'ensemble à envoyer
-        if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
-
-            let idList = []
-
-            for (let i = 0; i < panier.length; i++) {
-                idList.push(panier[i].id)
-            }
-
-            let commande = {
-                contact: {
-                    firstName: firstName.value,
-                    lastName: lastName.value,
-                    address: address.value,
-                    city: city.value,
-                    email: email.value,
-                },
-                products: idList,
-            }
-            // Méthode pour envoyer la commande
-            let envoiCommande = {
-                method: 'POST',
-                body: JSON.stringify(commande),
-                headers: { 'Content-Type': 'application/json' }
-            }
-            // Envoi de la commande et récupération de l'id commande
-            fetch(`http://localhost:3000/api/Products/order`, envoiCommande)
-                .then((response) => {
-                    return response.json();
-                })
-                .then((data) => {
-                    // Renvoi vers la page confirmation avec l'id de la commande dans l'url
-                    window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
-
-                })
-
-        }
-
-        // Si les champs du formulaire ne sont pas bien remplis
-        else {
-            window.alert("Veuillez remplir les champs du formulaire correctement");
-        }
+        window.alert("Veuillez remplir les champs du formulaire correctement");
     }
-})
+}
+)

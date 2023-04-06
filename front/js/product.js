@@ -31,60 +31,75 @@ fetch(`http://localhost:3000/api/Products/${recupId}`)
 
     })
 
+const quantiteInput = document.getElementById("quantity");
+quantiteInput.addEventListener("change", function () {
+    if (quantiteInput.value == 0 || quantiteInput.value > 100) {
+        window.alert("Veuillez choisir un nombre entre 1 et 100.")
+    }
+})
+
 let addToCartBtn = document.getElementById('addToCart')
 // Ecoute sur le bouton Ajouter au panier
 addToCartBtn.addEventListener("click", function () {
-    // Variables pour les informations de l'objet produit
-    let idProduit = recupId;
-    let couleurProduit = document.getElementById("colors").value;
-    let quantiteProduit = Number(document.getElementById("quantity").value);
-    // Création d'une classe produit
-    class Produit {
-        constructor(id, couleur, quantite) {
-            this.id = id;
-            this.couleur = couleur;
-            this.quantite = quantite;
-
-        }
-    }
-
-    let produitObj = new Produit(idProduit, couleurProduit, quantiteProduit);
+    if (quantiteInput.value >= 1 && quantiteInput.value <= 100) {
 
 
-    let panier = JSON.parse(localStorage.getItem("panier"))
-    let modifQuantite = false;
+        // Variables pour les informations de l'objet produit
+        let idProduit = recupId;
+        let couleurProduit = document.getElementById("colors").value;
+        let quantiteProduit = Number(document.getElementById("quantity").value);
+        // Création d'une classe produit
+        class Produit {
+            constructor(id, couleur, quantite) {
+                this.id = id;
+                this.couleur = couleur;
+                this.quantite = quantite;
 
-    // Si le panier est vide , mettre le produit dedans
-    if (!panier) {
-        panier = [];
-        panier.push(produitObj);
-        localStorage.setItem("panier", JSON.stringify(panier));
-    }
-
-
-
-    else {
-        // Tant que les deux conditions ne sont pas remplies, continuer la boucle
-        let i = 0;
-        while (i < panier.length && !modifQuantite) {
-            // Si un élément du panier et le produit partagent la même id et couleur, augmenter la quantité dans le panier
-            if (panier[i].id === produitObj.id && panier[i].couleur === produitObj.couleur) {
-                panier[i].quantite += produitObj.quantite;
-                modifQuantite = true;
-                console.log(modifQuantite);
-                localStorage.setItem("panier", JSON.stringify(panier));
             }
-            i++;
-
         }
-        // Si ce lien n'a pas été trouvé, mettre le produit dans le panier
-        if (!modifQuantite) {
+
+        let produitObj = new Produit(idProduit, couleurProduit, quantiteProduit);
+
+
+        let panier = JSON.parse(localStorage.getItem("panier"))
+        let modifQuantite = false;
+
+        // Si le panier est vide , mettre le produit dedans
+        if (!panier) {
+            panier = [];
             panier.push(produitObj);
             localStorage.setItem("panier", JSON.stringify(panier));
         }
 
+
+
+        else {
+            // Tant que les deux conditions ne sont pas remplies, continuer la boucle
+            let i = 0;
+            while (i < panier.length && !modifQuantite) {
+                // Si un élément du panier et le produit partagent la même id et couleur, augmenter la quantité dans le panier
+                if (panier[i].id === produitObj.id && panier[i].couleur === produitObj.couleur) {
+                    panier[i].quantite += produitObj.quantite;
+                    modifQuantite = true;
+                    console.log(modifQuantite);
+                    localStorage.setItem("panier", JSON.stringify(panier));
+                }
+                i++;
+
+            }
+            // Si ce lien n'a pas été trouvé, mettre le produit dans le panier
+            if (!modifQuantite) {
+                panier.push(produitObj);
+                localStorage.setItem("panier", JSON.stringify(panier));
+            }
+
+        }
+
     }
 
+    else {
+        window.alert("Veuillez choisir un nombre entre 1 et 100.")
+    }
 
 })
 
