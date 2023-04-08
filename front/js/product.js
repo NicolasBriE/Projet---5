@@ -4,6 +4,7 @@ let params = new URLSearchParams(url.search)
 let recupId = params.get("id")
 
 const sectionItem = document.querySelector(".item");
+const NB_MAX = 100;
 
 fetch(`http://localhost:3000/api/Products/${recupId}`)
     .then((response) => {
@@ -33,7 +34,7 @@ fetch(`http://localhost:3000/api/Products/${recupId}`)
 
 const quantiteInput = document.getElementById("quantity");
 quantiteInput.addEventListener("change", function () {
-    if (quantiteInput.value == 0 || quantiteInput.value > 100) {
+    if (quantiteInput.value == 0 || quantiteInput.value > NB_MAX) {
         window.alert("Veuillez choisir un nombre entre 1 et 100.")
     }
 })
@@ -41,7 +42,7 @@ quantiteInput.addEventListener("change", function () {
 let addToCartBtn = document.getElementById('addToCart')
 // Ecoute sur le bouton Ajouter au panier
 addToCartBtn.addEventListener("click", function () {
-    if (quantiteInput.value >= 1 && quantiteInput.value <= 100) {
+    if (quantiteInput.value >= 1 && quantiteInput.value <= NB_MAX) {
 
 
         // Variables pour les informations de l'objet produit
@@ -80,7 +81,7 @@ addToCartBtn.addEventListener("click", function () {
                 // Si un élément du panier et le produit partagent la même id et couleur, augmenter la quantité dans le panier
                 if (panier[i].id === produitObj.id && panier[i].couleur === produitObj.couleur) {
                     panier[i].quantite += produitObj.quantite;
-                    if (panier[i].quantite > 100) {
+                    if (panier[i].quantite > NB_MAX) {
                         modifQuantite = true;
                         window.alert("Vous ne pouvez pas choisir plus de 100 exemplaires d'un même produit.");
                     }
