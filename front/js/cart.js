@@ -139,7 +139,6 @@ fetch('http://localhost:3000/api/Products/')
             boutonSupprimer.addEventListener("click", () => {
                 majPanier(cartItem, data);
             }
-
             )
             cartItemContentSettingsDelete.appendChild(boutonSupprimer);
 

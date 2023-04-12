@@ -3,12 +3,11 @@ let url = new URL(window.location.href)
 let params = new URLSearchParams(url.search)
 let recupId = params.get("id")
 
-const sectionItem = document.querySelector(".item");
 const NB_MAX = 100;
 
 fetch(`http://localhost:3000/api/Products/${recupId}`)
     .then((response) => {
-        return response.json();
+        return response.json()
     })
 
     .then((data) => {
@@ -60,7 +59,6 @@ addToCartBtn.addEventListener("click", function () {
         }
 
         let produitObj = new Produit(idProduit, couleurProduit, quantiteProduit);
-
 
         let panier = JSON.parse(localStorage.getItem("panier"))
         let modifQuantite = false;
