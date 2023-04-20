@@ -2,6 +2,7 @@
 let url = new URL(window.location.href)
 let params = new URLSearchParams(url.search)
 let recupId = params.get("id")
+let colorSelect = true;
 
 const NB_MAX = 100;
 
@@ -28,8 +29,23 @@ fetch(`http://localhost:3000/api/Products/${recupId}`)
         for (let i = 0; i < data.colors.length; i++) {
             colorsItem.innerHTML += `<option value = "${data.colors[i]}">${data.colors[i]}</option>`
         }
+        colorsItem.addEventListener("change", function () {
+            console.log(colorsItem.value);
+            if (!colorsItem.value) {
+                colorSelect = false;
+                window.alert("Veuillez sélectionner une couleur.")
+                console.log(colorSelect);
+            }
+
+            else {
+                colorSelect = true;
+                console.log(colorSelect);
+            }
+        })
 
     })
+
+
 
 const quantiteInput = document.getElementById("quantity");
 quantiteInput.addEventListener("change", function () {
@@ -38,10 +54,13 @@ quantiteInput.addEventListener("change", function () {
     }
 })
 
+
 let addToCartBtn = document.getElementById('addToCart')
 // Ecoute sur le bouton Ajouter au panier
 addToCartBtn.addEventListener("click", function () {
-    if (quantiteInput.value >= 1 && quantiteInput.value <= NB_MAX) {
+
+
+    if (quantiteInput.value >= 1 && quantiteInput.value <= NB_MAX && colorSelect) {
 
 
         // Variables pour les informations de l'objet produit
@@ -63,13 +82,13 @@ addToCartBtn.addEventListener("click", function () {
         let panier = JSON.parse(localStorage.getItem("panier"))
         let modifQuantite = false;
 
+
         // Si le panier est vide , mettre le produit dedans
         if (!panier) {
             panier = [];
             panier.push(produitObj);
             localStorage.setItem("panier", JSON.stringify(panier));
         }
-
 
 
         else {
@@ -102,8 +121,12 @@ addToCartBtn.addEventListener("click", function () {
 
     }
 
-    else {
+    else if (quantiteInput.value < 1 || quantiteInput.value > NB_MAX) {
         window.alert("Veuillez choisir un nombre entre 1 et 100.")
+    }
+
+    else if (!colorSelect) {
+        window.alert("Veuillez sélectionner une couleur.")
     }
 
 }

@@ -1,28 +1,30 @@
 let panier = JSON.parse(localStorage.getItem("panier"))
 
 const cartItems = document.getElementById('cart__items')
+const totalQuantite = document.getElementById("totalQuantity");
+const calculPrix = document.getElementById("totalPrice");
+let quantiteMark = true;
 
 // Fonction pour calculer les nouveaux prix et quantité à partir du panier et mettre à jour le dom
 function calculTotauxQtePrix(data) {
-    let totalQte = 0;
-    let totalPrix = 0;
-
-    for (i = 0; i < panier.length; i++) {
-        totalQte += Number(panier[i].quantite);
-        const details = data.find((element) => element._id === panier[i].id);
-        totalPrix += (details.price) * (panier[i].quantite);
+    let totaux = {
+        quantite: 0,
+        prix: 0
     }
 
-    const totalQuantite = document.getElementById("totalQuantity");
-    totalQuantite.innerText = totalQte;
+    for (i = 0; i < panier.length; i++) {
+        totaux.quantite += Number(panier[i].quantite);
+        const details = data.find((element) => element._id === panier[i].id);
+        totaux.prix += (details.price) * (panier[i].quantite);
+    }
 
-    const calculPrix = document.getElementById("totalPrice");
-    calculPrix.innerText = totalPrix;
-
+    return totaux
 }
+
 
 // Fonction pour mettre à jour le panier lorsqu'on supprime un produit, et mettre à jour le dom avec la fonction précédente
 function majPanier(cartItem, data) {
+    // remplacer par un find
     for (let i = 0; i < panier.length; i++) {
         if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
             panier.splice(i, 1);
@@ -35,11 +37,15 @@ function majPanier(cartItem, data) {
 }
 
 // Si le panier est vide, envoyer un message d'erreur
-if (panier.length === 0) {
-    window.alert("Votre panier est vide");
-    const hideForm = document.querySelector(".cart__order")
-    hideForm.style.display = "none";
+function panierVide() {
+    if (panier.length === 0) {
+        window.alert("Votre panier est vide");
+        const hideForm = document.querySelector(".cart__order")
+        hideForm.style.display = "none";
+    }
 }
+
+panierVide();
 
 // Récupération des données de l'api
 fetch('http://localhost:3000/api/Products/')
@@ -112,16 +118,18 @@ fetch('http://localhost:3000/api/Products/')
                     let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     modifQuant.quantite = quantiteInput.value;
                     localStorage.setItem("panier", JSON.stringify(panier));
-                    calculTotauxQtePrix(data);
+                    let totaux = calculTotauxQtePrix(data);
+                    totalQuantite.innerText = totaux.quantite;
+                    calculPrix.innerText = totaux.prix;
+                    quantiteMark = true;
                 }
-                // Si la valeur est 0, supprimer du panier et du dom
-                else if (quantiteInput.value == 0) {
-                    majPanier(cartItem, data);
+
+                // Sinon, envoyer un message pour signifier que c'est impossible
+                else {
+                    window.alert("La quantité sélectionnée doit être comprise entre 1 et 100.")
+                    quantiteMark = false;
                 }
-                // Si la valeur est supérieure à 100, envoyer un message pour signifier que c'est impossible
-                else if (quantiteInput.value > 100) {
-                    window.alert("Vous ne pouvez pas choisir plus de 100 exemplaires d'un même produit.")
-                }
+
 
             })
             quantiteInput.setAttribute("min", "1");
@@ -138,6 +146,7 @@ fetch('http://localhost:3000/api/Products/')
             // Ecoute du bouton Supprimer, au clic, supprimer du panier et du dom
             boutonSupprimer.addEventListener("click", () => {
                 majPanier(cartItem, data);
+                panierVide();
             }
             )
             cartItemContentSettingsDelete.appendChild(boutonSupprimer);
@@ -147,7 +156,9 @@ fetch('http://localhost:3000/api/Products/')
 
 
         // Mettre à jour prix et quantité
-        calculTotauxQtePrix(data);
+        let totaux = calculTotauxQtePrix(data);
+        totalQuantite.innerText = totaux.quantite;
+        calculPrix.innerText = totaux.prix;
     })
 
 
@@ -260,7 +271,7 @@ boutonCommander.addEventListener("click", (event) => {
 
 
     // Si les tests regex sont bons, récupérer les id dans le panier et les infos dans les champs du formulaire, et créer l'ensemble à envoyer
-    if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail) {
+    if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail && quantiteMark) {
 
         let idList = []
 
@@ -298,8 +309,12 @@ boutonCommander.addEventListener("click", (event) => {
     }
 
     // Si les champs du formulaire ne sont pas bien remplis
-    else {
-        window.alert("Veuillez remplir les champs du formulaire correctement");
+    else if (!verifFirstName || !verifLastName || !verifAddress || !verifCity || !verifEmail) {
+        window.alert("Veuillez remplir les champs du formulaire correctement.");
+    }
+
+    else if (!quantiteMark) {
+        window.alert("La quantité sélectionnée doit être comprise entre 1 et 100.")
     }
 }
 )
