@@ -77,10 +77,11 @@ addToCartBtn.addEventListener("click", function () {
         let quantiteProduit = Number(document.getElementById("quantity").value);
         // Création d'une classe produit
         class Produit {
-            constructor(id, couleur, quantite) {
+            constructor(id, couleur, quantite, prix) {
                 this.id = id;
                 this.couleur = couleur;
                 this.quantite = quantite;
+                this.prix = prix;
 
             }
         }

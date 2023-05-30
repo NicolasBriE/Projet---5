@@ -28,17 +28,13 @@ function calculTotauxQtePrix(panier) {
 
     for (let i = 0; i < panier.length; i++) {
         total.quantite += Number(panier[i].quantite);
-        fetch(`http://localhost:3000/api/Products/${panier[i].id}`)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                total.prix += data.price * panier[i].quantite;
-                totalQuantite.innerText = total.quantite;
-                calculPrix.innerText = total.prix;
-            })
+        total.prix += Number(panier[i].prix) * Number(panier[i].quantite)
+
+
+
     }
-    return total;
+    console.log(total);
+    return total
 }
 
 
@@ -101,6 +97,7 @@ for (let i = 0; i < panier.length; i++) {
             return response.json();
         })
         .then((data) => {
+
             console.log(data);
             // Création de l'article
             const cartItem = document.createElement("article");
@@ -136,6 +133,7 @@ for (let i = 0; i < panier.length; i++) {
             // Création du prix
             const prixItem = document.createElement("p");
             prixItem.innerText = data.price + "€";
+            panier[i].prix = data.price;
             cartItemContentDescription.appendChild(prixItem);
             // Création de la div content settings
             const cartItemContentSettings = document.createElement("div");
@@ -173,8 +171,11 @@ for (let i = 0; i < panier.length; i++) {
                     window.alert("La quantité sélectionnée doit être comprise entre 1 et 100.")
 
                 }
-                calculTotauxQtePrix(panier);
-                // champsPrixQte(total);
+
+                let total = calculTotauxQtePrix(panier);
+                totalQuantite.innerText = total.quantite;
+                calculPrix.innerText = total.prix;
+
             })
 
 
@@ -193,24 +194,30 @@ for (let i = 0; i < panier.length; i++) {
             boutonSupprimer.addEventListener("click", () => {
                 majPanier(cartItem, data);
                 if (panier.length > 0) {
-                    calculTotauxQtePrix(panier);
+                    total = calculTotauxQtePrix(panier);
+                    totalQuantite.innerText = total.quantite;
+                    calculPrix.innerText = total.prix;
                 }
                 else {
                     panierVide();
                 }
-                // champsPrixQte(total);
+
 
             }
 
             )
             cartItemContentSettingsDelete.appendChild(boutonSupprimer);
+            let total = calculTotauxQtePrix(panier);
+            totalQuantite.innerText = total.quantite;
+            calculPrix.innerText = total.prix;
         })
+
 }
 
 
 
 // Mettre à jour prix et quantité
-calculTotauxQtePrix(panier);
+
 // champsPrixQte();
 
 
@@ -315,7 +322,9 @@ boutonCommander.addEventListener("click", (event) => {
                 // Renvoi vers la page confirmation avec l'id de la commande dans l'url
                 window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
                 localStorage.clear();
-                calculTotauxQtePrix(panier);
+                let total = calculTotauxQtePrix(panier);
+                totalQuantite.innerText = total.quantite;
+                calculPrix.innerText = total.prix;
 
             })
 
