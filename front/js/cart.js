@@ -1,64 +1,107 @@
-let panier = JSON.parse(localStorage.getItem("panier"))
+let panier;
+
+
+
+if (JSON.parse(localStorage.getItem("panier")) != null) {
+    panier = JSON.parse(localStorage.getItem("panier"))
+}
+
+else {
+    panier = []
+}
+console.log(JSON.parse(localStorage.getItem("panier")))
 
 const cartItems = document.getElementById('cart__items')
 const totalQuantite = document.getElementById("totalQuantity");
 const calculPrix = document.getElementById("totalPrice");
-let quantiteMark = true;
+
+// Variables pour les tests regex
+
 
 // Fonction pour calculer les nouveaux prix et quantité à partir du panier et mettre à jour le dom
-function calculTotauxQtePrix(data) {
-    let totaux = {
+function calculTotauxQtePrix(panier) {
+
+    let total = {
         quantite: 0,
         prix: 0
     }
 
-    for (i = 0; i < panier.length; i++) {
-        totaux.quantite += Number(panier[i].quantite);
-        const details = data.find((element) => element._id === panier[i].id);
-        totaux.prix += (details.price) * (panier[i].quantite);
+    for (let i = 0; i < panier.length; i++) {
+        total.quantite += Number(panier[i].quantite);
+        fetch(`http://localhost:3000/api/Products/${panier[i].id}`)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                total.prix += data.price * panier[i].quantite;
+                totalQuantite.innerText = total.quantite;
+                calculPrix.innerText = total.prix;
+            })
     }
-
-    return totaux
+    return total;
 }
+
+
+
+// function champsPrixQte() {
+
+// }
+
 
 
 // Fonction pour mettre à jour le panier lorsqu'on supprime un produit, et mettre à jour le dom avec la fonction précédente
 function majPanier(cartItem, data) {
-    // remplacer par un find
-    for (let i = 0; i < panier.length; i++) {
-        if (panier[i].id === cartItem.getAttribute("data-id") && panier[i].couleur === cartItem.getAttribute("data-color")) {
-            panier.splice(i, 1);
-            localStorage.setItem("panier", JSON.stringify(panier));
-            calculTotauxQtePrix(data);
-        }
-    }
+    let removeProduct = panier.findIndex((element) => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
+    panier.splice(removeProduct, 1);
+    localStorage.setItem("panier", JSON.stringify(panier));
     cartItem.remove();
     window.alert("Ce produit a été supprimé du panier.")
 }
 
 // Si le panier est vide, envoyer un message d'erreur
+function hideFormulaire() {
+    window.alert("Votre panier est vide");
+    const hideForm = document.querySelector(".cart__order")
+    hideForm.style.display = "none";
+}
+
 function panierVide() {
+
     if (panier.length === 0) {
-        window.alert("Votre panier est vide");
-        const hideForm = document.querySelector(".cart__order")
-        hideForm.style.display = "none";
+        hideFormulaire();
+        totalQuantite.innerText = null;
+        calculPrix.innerText = null;
+    }
+
+}
+
+function verifInput(regex, champInput, errorMessage) {
+
+    if (regex.test(champInput.value)) {
+        errorMessage.innerText = "";
+
+        return true;
+    }
+
+    else {
+        errorMessage.innerText = "Veuillez remplir le champ correctement.";
+
+        return false;
     }
 }
 
+
 panierVide();
 
-// Récupération des données de l'api
-fetch('http://localhost:3000/api/Products/')
-    .then((response) => {
-        return response.json();
-    })
 
-    .then((data) => {
-
-        for (let i = 0; i < panier.length; i++) {
-
-            // Récupération de l'élément dans l'api qui correspond à l'élément dans le panier pour avoir toutes les informations nécessaires
-            const details = data.find((element) => element._id === panier[i].id);
+for (let i = 0; i < panier.length; i++) {
+    // Récupération de l'élément dans l'api qui correspond à l'élément dans le panier pour avoir toutes les informations nécessaires
+    fetch(`http://localhost:3000/api/Products/${panier[i].id}`)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
             // Création de l'article
             const cartItem = document.createElement("article");
             cartItem.className = "cart__item";
@@ -71,8 +114,8 @@ fetch('http://localhost:3000/api/Products/')
             cartItem.appendChild(cartItemImg);
             // Création de l'image
             const imageItems = document.createElement("img");
-            imageItems.src = details.imageUrl;
-            imageItems.alt = details.altTxt;
+            imageItems.src = data.imageUrl;
+            imageItems.alt = data.altTxt;
             cartItemImg.appendChild(imageItems);
             // Création de la div content
             const cartItemContent = document.createElement("div");
@@ -84,7 +127,7 @@ fetch('http://localhost:3000/api/Products/')
             cartItemContent.appendChild(cartItemContentDescription);
             // Création du titre
             const nomItem = document.createElement("h2");
-            nomItem.innerText = details.name;
+            nomItem.innerText = data.name;
             cartItemContentDescription.appendChild(nomItem);
             // Création de la couleur
             const couleurItem = document.createElement("p");
@@ -92,7 +135,7 @@ fetch('http://localhost:3000/api/Products/')
             cartItemContentDescription.appendChild(couleurItem);
             // Création du prix
             const prixItem = document.createElement("p");
-            prixItem.innerText = details.price + "€";
+            prixItem.innerText = data.price + "€";
             cartItemContentDescription.appendChild(prixItem);
             // Création de la div content settings
             const cartItemContentSettings = document.createElement("div");
@@ -118,20 +161,23 @@ fetch('http://localhost:3000/api/Products/')
                     let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
                     modifQuant.quantite = quantiteInput.value;
                     localStorage.setItem("panier", JSON.stringify(panier));
-                    let totaux = calculTotauxQtePrix(data);
-                    totalQuantite.innerText = totaux.quantite;
-                    calculPrix.innerText = totaux.prix;
-                    quantiteMark = true;
+
                 }
+
 
                 // Sinon, envoyer un message pour signifier que c'est impossible
                 else {
+                    let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
+                    quantiteInput.value = modifQuant.quantite;
+
                     window.alert("La quantité sélectionnée doit être comprise entre 1 et 100.")
-                    quantiteMark = false;
+
                 }
-
-
+                calculTotauxQtePrix(panier);
+                // champsPrixQte(total);
             })
+
+
             quantiteInput.setAttribute("min", "1");
             quantiteInput.setAttribute("max", "100");
             quantiteInput.setAttribute("value", `${panier[i].quantite}`);
@@ -146,20 +192,28 @@ fetch('http://localhost:3000/api/Products/')
             // Ecoute du bouton Supprimer, au clic, supprimer du panier et du dom
             boutonSupprimer.addEventListener("click", () => {
                 majPanier(cartItem, data);
-                panierVide();
+                if (panier.length > 0) {
+                    calculTotauxQtePrix(panier);
+                }
+                else {
+                    panierVide();
+                }
+                // champsPrixQte(total);
+
             }
+
             )
             cartItemContentSettingsDelete.appendChild(boutonSupprimer);
+        })
+}
 
-        }
 
 
+// Mettre à jour prix et quantité
+calculTotauxQtePrix(panier);
+// champsPrixQte();
 
-        // Mettre à jour prix et quantité
-        let totaux = calculTotauxQtePrix(data);
-        totalQuantite.innerText = totaux.quantite;
-        calculPrix.innerText = totaux.prix;
-    })
+
 
 
 // Variables pour les champs du formulaire
@@ -169,98 +223,51 @@ let address = document.getElementById("address");
 let city = document.getElementById("city");
 let email = document.getElementById("email");
 // Regex à utiliser
-let nameRegex = /^[A-Z][A-Za-z\é\è\ê\-]+$/;
-let addressRegex = /^[0-9]{1,3}[a-zA-Zéêëèîïâäçù ,'-]+$/;
-let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
-// Variables pour les tests regex
-let verifFirstName;
-let verifLastName;
-let verifAddress;
-let verifCity;
-let verifEmail;
+let nameRegex = /^[A-Za-z\é\è\ê\ç\ë\ù\ê\à\ ]+$/;
+let addressRegex = /^[A-Za-z0-9\é\è\ê\ç\ë\ù\ê\à ]+$/;
+let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9]+[.]+[\w-]{2,4}$/;
+// 
+
+
+let firstNameErrorMessage = document.getElementById("firstNameErrorMsg");
+let lastNameErrorMessage = document.getElementById("lastNameErrorMsg");
+let addressErrorMessage = document.getElementById("addressErrorMsg");
+let cityErrorMessage = document.getElementById("cityErrorMsg");
+let emailErrorMessage = document.getElementById("emailErrorMsg");
+
 
 // Ecoute du champ firstname
 firstName.addEventListener("change", function () {
-    // Message à envoyer en cas d'erreur
-    let firstNameErrorMessage = document.getElementById("firstNameErrorMsg");
 
-
-    if (nameRegex.test(firstName.value)) {
-        verifFirstName = true;
-        firstNameErrorMessage.innerText = "";
-    }
-
-    else {
-        verifFirstName = false;
-        firstNameErrorMessage.innerText = "Veuillez remplir le champ correctement.";
-    }
+    verifInput(nameRegex, firstName, firstNameErrorMessage);
 
 })
 
 lastName.addEventListener("change", function () {
-    let lastNameErrorMessage = document.getElementById("lastNameErrorMsg");
 
+    verifInput(nameRegex, lastName, lastNameErrorMessage);
 
-
-    if (nameRegex.test(lastName.value)) {
-        verifLastName = true;
-        lastNameErrorMessage.innerText = "";
-    }
-
-    else {
-        verifLastName = false;
-        lastNameErrorMessage.innerText = "Veuillez remplir le champ correctement.";
-    }
 })
 
 address.addEventListener("change", function () {
-    let addressErrorMessage = document.getElementById("addressErrorMsg");
 
+    verifInput(addressRegex, address, addressErrorMessage);
 
-
-    if (addressRegex.test(address.value)) {
-        verifAddress = true;
-        addressErrorMessage.innerText = "";
-    }
-
-    else {
-        verifAddress = false;
-        addressErrorMessage.innerText = "Veuillez remplir le champ correctement.";
-    }
 })
 
 city.addEventListener("change", function () {
-    let cityErrorMessage = document.getElementById("cityErrorMsg");
 
+    verifInput(nameRegex, city, cityErrorMessage);
 
-
-    if (nameRegex.test(city.value)) {
-        verifCity = true;
-        cityErrorMessage.innerText = "";
-    }
-
-    else {
-        verifCity = false;
-        cityErrorMessage.innerText = "Veuillez remplir le champ correctement.";
-    }
 })
 
 email.addEventListener("change", function () {
-    let emailErrorMessage = document.getElementById("emailErrorMsg");
 
+    verifInput(emailRegex, email, emailErrorMessage);
 
-
-    if (emailRegex.test(email.value)) {
-        verifEmail = true;
-        emailErrorMessage.innerText = "";
-
-    }
-
-    else {
-        verifEmail = false;
-        emailErrorMessage.innerText = "Veuillez remplir le champ correctement.";
-    }
 })
+
+
 
 // Récupération du bouton commander
 boutonCommander = document.getElementById("order");
@@ -271,7 +278,11 @@ boutonCommander.addEventListener("click", (event) => {
 
 
     // Si les tests regex sont bons, récupérer les id dans le panier et les infos dans les champs du formulaire, et créer l'ensemble à envoyer
-    if (verifFirstName && verifLastName && verifAddress && verifCity && verifEmail && quantiteMark) {
+    if (verifInput(nameRegex, firstName, firstNameErrorMessage) &&
+        verifInput(nameRegex, lastName, lastNameErrorMessage) &&
+        verifInput(addressRegex, address, addressErrorMessage) &&
+        verifInput(nameRegex, city, cityErrorMessage) &&
+        verifInput(emailRegex, email, emailErrorMessage)) {
 
         let idList = []
 
@@ -303,18 +314,17 @@ boutonCommander.addEventListener("click", (event) => {
             .then((data) => {
                 // Renvoi vers la page confirmation avec l'id de la commande dans l'url
                 window.location.assign(`./confirmation.html?orderId=${data.orderId}`)
+                localStorage.clear();
+                calculTotauxQtePrix(panier);
 
             })
 
     }
 
     // Si les champs du formulaire ne sont pas bien remplis
-    else if (!verifFirstName || !verifLastName || !verifAddress || !verifCity || !verifEmail) {
+    else {
         window.alert("Veuillez remplir les champs du formulaire correctement.");
     }
 
-    else if (!quantiteMark) {
-        window.alert("La quantité sélectionnée doit être comprise entre 1 et 100.")
-    }
 }
 )
