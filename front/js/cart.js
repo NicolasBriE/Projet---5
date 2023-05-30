@@ -224,7 +224,7 @@ let city = document.getElementById("city");
 let email = document.getElementById("email");
 // Regex à utiliser
 let nameRegex = /^[A-Za-z\é\è\ê\ç\ë\ù\ê\à\ ]+$/;
-let addressRegex = /^[A-Za-z0-9\é\è\ê\ç\ë\ù\ê\à ]+$/;
+let addressRegex = /^[A-Za-z0-9\é\è\ê\ç\ë\ù\ê\à\, ]+$/;
 let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9]+[.]+[\w-]{2,4}$/;
 // 
 
