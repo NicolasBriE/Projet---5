@@ -9,13 +9,10 @@ if (JSON.parse(localStorage.getItem("panier")) != null) {
 else {
     panier = []
 }
-console.log(JSON.parse(localStorage.getItem("panier")))
 
 const cartItems = document.getElementById('cart__items')
 const totalQuantite = document.getElementById("totalQuantity");
 const calculPrix = document.getElementById("totalPrice");
-
-// Variables pour les tests regex
 
 
 // Fonction pour calculer les nouveaux prix et quantité à partir du panier et mettre à jour le dom
@@ -33,15 +30,9 @@ function calculTotauxQtePrix(panier) {
 
 
     }
-    console.log(total);
     return total
 }
 
-
-
-// function champsPrixQte() {
-
-// }
 
 
 
@@ -98,7 +89,6 @@ for (let i = 0; i < panier.length; i++) {
         })
         .then((data) => {
 
-            console.log(data);
             // Création de l'article
             const cartItem = document.createElement("article");
             cartItem.className = "cart__item";
@@ -216,12 +206,6 @@ for (let i = 0; i < panier.length; i++) {
 
 
 
-// Mettre à jour prix et quantité
-
-// champsPrixQte();
-
-
-
 
 // Variables pour les champs du formulaire
 let firstName = document.getElementById("firstName");
@@ -233,7 +217,7 @@ let email = document.getElementById("email");
 let nameRegex = /^[A-Za-z\é\è\ê\ç\ë\ù\ê\à\ ]+$/;
 let addressRegex = /^[A-Za-z0-9\é\è\ê\ç\ë\ù\ê\à\, ]+$/;
 let emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9]+[.]+[\w-]{2,4}$/;
-// 
+
 
 
 let firstNameErrorMessage = document.getElementById("firstNameErrorMsg");

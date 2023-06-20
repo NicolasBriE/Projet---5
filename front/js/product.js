@@ -37,16 +37,13 @@ fetch(`http://localhost:3000/api/Products/${recupId}`)
             colorsItem.innerHTML += `<option value = "${data.colors[i]}">${data.colors[i]}</option>`
         }
         colorsItem.addEventListener("change", function () {
-            console.log(colorsItem.value);
             if (!colorsItem.value) {
                 colorSelect = false;
                 window.alert("Veuillez sélectionner une couleur.")
-                console.log(colorSelect);
             }
 
             else {
                 colorSelect = true;
-                console.log(colorSelect);
             }
         })
 
@@ -113,7 +110,6 @@ addToCartBtn.addEventListener("click", function () {
                     }
                     else {
                         modifQuantite = true;
-                        console.log(modifQuantite);
                         localStorage.setItem("panier", JSON.stringify(panier));
                         window.alert(`Vous avez ajouté ${produitObj.quantite} ${nameProduit} ${produitObj.couleur} au panier.`);
                     }
