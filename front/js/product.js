@@ -71,7 +71,7 @@ addToCartBtn.addEventListener("click", function () {
         // Variables pour les informations de l'objet produit
         let idProduit = recupId;
         let couleurProduit = document.getElementById("colors").value;
-        let quantiteProduit = Number(document.getElementById("quantity").value);
+        let quantiteProduit = Number.parseInt(document.getElementById("quantity").value);
         // Création d'une classe produit
         class Produit {
             constructor(id, couleur, quantite, prix) {

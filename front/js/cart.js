@@ -147,7 +147,7 @@ for (let i = 0; i < panier.length; i++) {
                 // Si la valeur est comprise entre 1 et 100, récupérer dans le panier l'élément qui correspond et mettre à jour la quantité, puis le dom
                 if (quantiteInput.value >= 1 && quantiteInput.value <= 100) {
                     let modifQuant = panier.find(element => element.id === cartItem.dataset.id && element.couleur === cartItem.dataset.color);
-                    modifQuant.quantite = quantiteInput.value;
+                    modifQuant.quantite = parseInt(quantiteInput.value);
                     localStorage.setItem("panier", JSON.stringify(panier));
 
                 }
